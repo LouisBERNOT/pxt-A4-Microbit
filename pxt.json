@@ -1,0 +1,21 @@
+    
+{
+    "name": "A4-Technologie-Extension",
+    "version": "0.0.1",
+    "description": "add description here",
+    "license": "MIT",
+    "dependencies": {
+        "core": "*"
+    },
+    "files": [
+        "README.md",
+        "motors_shield.ts"
+    ],
+    "testFiles": [
+        "test1.ts"
+    ],
+    "public": true,
+    "yotta": {
+        "config": {}
+    }
+}

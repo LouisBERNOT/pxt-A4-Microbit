@@ -50,10 +50,10 @@ namespace A4_Robot_Driver {
 
 
     /**
-    * Permet de controler les déplacements et la vitesse du robot
-    * @param dir sens de déplacement du robot
-    * @param speed vitesse en pourcentage du moteur
-    */
+     * Permet de controler les déplacements et la vitesse du robot
+     * @param dir sens de déplacement du robot
+     * @param speed vitesse en pourcentage du moteur
+     */
 
     //% blockId=A4_Robot_Driver_Robot_Move
     //% block="<Nom du robot> %dir| vitesse %speed"
@@ -89,6 +89,81 @@ namespace A4_Robot_Driver {
                 setDir(Motors.MotorFull, MotorDirection.Stop);
                 break
         }
+        setMotors();
+    }
+
+
+    /**
+     * Mesure la distance à partir d'un capteur à ultrason
+     * @param pin Pin ou est branché le capteur
+     */
+
+    //% blockId=A4_Robot_Driver_ultrasonic_cm 
+    //% block="Ultrason - Mesurer la distance|%name| (cm)"
+    //% name.fieldEditor="gridpicker" 
+    //% name.fieldOptions.columns=5
+    //% name.fieldOptions.tooltips="false"
+    //% name.fieldOptions.width="0"
+    export function measDistCm(name: DigitalPin): number {
+        let duration = 0;
+        let distance = 0;
+        pins.digitalWritePin(name, 0); //make sure pin is low
+        control.waitMicros(2);
+        pins.digitalWritePin(name, 1); //send echo
+        control.waitMicros(20);
+        pins.digitalWritePin(name, 0);
+        duration = pins.pulseIn(name, PulseValue.High, 50000); // Max duration 50 ms - receive echo
+        distance = duration * 153 / 29 / 2 / 100;
+        Math.constrain(distance, 0, 500);
+        //basic.pause(50);
+        return distance;
+    }
+
+
+    /**
+     * Configure la position angulaire d'un servomoteur
+     * @param pin choix du moteur: droit ou gauche
+     */
+
+    //% blockId=A4_Robot_Driver_servo_degrees
+    //% block="positionner le servo sur |%pin| à |%angle| degrés"
+    //% parts="A4_Robot_Driver" advanced=false
+    //% angle.shadow="protractorPicker"
+    //% angle.defl=90
+    export function setServoMotor(pin: AnalogPin, angle: number): void {
+        pins.servoWritePin(pin, Math.constrain(angle, 0, 180));
+    }
+
+
+    /**
+     * Permet de changer la direction du moteur sélectionné
+     * @param motor choix du moteur: droit ou gauche
+     * @param dir sens de rotation du moteur comparé au sens du robot
+     */
+
+    //% blockId=A4_Robot_Driver_motor_dir
+    //% block="%motor| %dir"
+    //% parts="A4_Robot_Driver" advanced=true
+    //% motor.defl=MotorFull
+    export function motorDir(motor: Motors, dir: MotorDirection): void {
+        setDir(motor, dir);
+        setMotors();
+    }
+
+
+    /**
+     * Permet de changer la vitesse du moteur sélectionné
+     * @param motor choix du moteur: droit ou gauche
+     * @param speed vitesse en pourcentage du moteur
+     */
+    
+    //% blockId=A4_Robot_Driver_Motor_Speed
+    //% block="Régler la vitesse %motor| à %speed"
+    //% speed.min=0 speed.max=100
+    //% parts="A4_Robot_Driver" advanced=true
+    //% speed.defl=75
+    export function motorSpeed(motor: Motors, speed: number): void {
+        setSpeed(motor, speed);
         setMotors();
     }
 
